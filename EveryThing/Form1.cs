@@ -3165,13 +3165,65 @@ namespace EveryThing
 
         private void button46_Click(object sender, EventArgs e)
         {
+            //try
+            //{
+            //    TSD.DrawingEnumerator drawingEnumerator = new TSD.DrawingHandler().GetDrawingSelector().GetSelected();
+
+            //    while (drawingEnumerator.MoveNext())
+            //    {
+            //        var selDraw = drawingEnumerator.Current;
+
+            //        PropertyInfo pi = drawingEnumerator.Current.GetType()
+            //            .GetProperty("Identifier", BindingFlags.Instance | BindingFlags.NonPublic);
+            //        object value = pi.GetValue(drawingEnumerator.Current, null);
+            //        Identifier Identifier = (Identifier)value;
+            //        TSM.Beam fakebeam = new TSM.Beam();
+            //        fakebeam.Identifier = Identifier;
+            //        string drawType = "";
+            //        fakebeam.GetReportProperty("TYPE", ref drawType);
+
+            //        string oldZak = "";
+            //        selDraw.GetUserProperty("metcon_Zakaz", ref oldZak);
+
+            //        selDraw.SetUserProperty("metcon_DrZakaz", oldZak);
+            //    }
+            //}
+
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.ToString());
+            //}
+
             try
             {
+                Dictionary<string, int> dict = new Dictionary<string, int>();
+                string projResponse = DBQueryFree("select id, title from public.pkoservices_projects_book");
+                JObject jObject = JObject.Parse(projResponse);
+                var msg = jObject.SelectToken("msg");
+
+                int projectID = int.MinValue;
+                string title = string.Empty;
+                if (msg.HasValues)
+                {
+                    foreach (var item in msg)
+                    {
+                        projectID = (int)item["id"];
+                        title = (string)item["title"];
+
+                        dict.Add(title, projectID);
+                    }
+                }
+
                 TSD.DrawingEnumerator drawingEnumerator = new TSD.DrawingHandler().GetDrawingSelector().GetSelected();
 
                 while (drawingEnumerator.MoveNext())
                 {
                     var selDraw = drawingEnumerator.Current;
+
+                    string oldZak = "";
+                    selDraw.GetUserProperty("metcon_DrZakaz", ref oldZak);
+                    int projID = int.MinValue;
+                    dict.TryGetValue(oldZak, out projID);
 
                     PropertyInfo pi = drawingEnumerator.Current.GetType()
                         .GetProperty("Identifier", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -3179,13 +3231,15 @@ namespace EveryThing
                     Identifier Identifier = (Identifier)value;
                     TSM.Beam fakebeam = new TSM.Beam();
                     fakebeam.Identifier = Identifier;
-                    string drawType = "";
-                    fakebeam.GetReportProperty("TYPE", ref drawType);
+                    string nameBase = "";
+                    fakebeam.GetReportProperty("NAME_BASE", ref nameBase);
 
-                    string oldZak = "";
-                    selDraw.GetUserProperty("metcon_Zakaz", ref oldZak);
 
-                    selDraw.SetUserProperty("metcon_DrZakaz", oldZak);
+                    string drawResponse = DBQueryFree(@"
+                            update public.model_drawing_enum
+                            set project_id=" + projID + @"
+                            where model_id='92de03bb-3c15-4d26-b6b8-f9142d85d128'
+                            and name_base='" + nameBase + "'");
                 }
             }
 
