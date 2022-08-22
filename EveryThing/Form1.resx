@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="TB_Query.Text" xml:space="preserve">
+    <value>SELECT * FROM public.model_drawing_enum_missing_numbers('92de03bb-3c15-4d26-b6b8-f9142d85d128', 1)
+
+
+SELECT * FROM public.model_drawing_enum_insert ('ksd', '92de03bb-3c15-4d26-b6b8-f9142d85d128', 'A', '[Б.9]', '1', '1', 0, 'True', 1)</value>
+  </data>
   <data name="TB_ProjectsList.Text" xml:space="preserve">
     <value>2044 2140 2159 2160 2161 2169 2851 2853 2350 2351 2352 2353 2355 2356 2357 2358 2359 2361 2369 2370 2371 2372 2373 2380 2382 2396 2550 2551 2552 2564 2567 2568 2569 2570 2571 2572 2573 2579 2593 2677 2678 2679 2680 2681 2728 2729 2730 2732 2745 2746 2854 2855 2856 2857 2858 2859 2860 2861 2862 2869 2500 37200</value>
   </data>

@@ -1,43 +1,39 @@
 ﻿using HtmlAgilityPack;
+using MailKit;
+using MailKit.Net.Imap;
+using MailKit.Net.Smtp;
+using MailKit.Search;
+using MailKit.Security;
+using Microsoft.Win32;
+using MimeKit;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using Tekla.Structures;
 using Tekla.Structures.Catalogs;
-using Tekla.Structures.DrawingInternal;
+using Tekla.Structures.Filtering;
+using Tekla.Structures.Filtering.Categories;
 using Tekla.Structures.Geometry3d;
-using TSM = Tekla.Structures.Model;
-using Tekla.Structures.Model.Operations;
-using Tekla.Structures.ModelInternal;
 using ZI_library;
 using SD = System.Drawing;
 using TSD = Tekla.Structures.Drawing;
 using TSDUI = Tekla.Structures.Drawing.UI;
-using Newtonsoft.Json.Linq;
-using System.Net;
-using Tekla.Structures.Solid;
-using System.Runtime.InteropServices;
-using System.Globalization;
-using System.Diagnostics;
-using Spire.Doc;
-using MailKit.Net.Smtp;
-using MailKit.Security;
-using MailKit.Net.Imap;
-using MailKit;
-using MailKit.Search;
-using MimeKit;
-using System.Reflection;
-using Tekla.Structures.Filtering.Categories;
-using Tekla.Structures.Filtering;
-using Microsoft.Win32;
+using TSM = Tekla.Structures.Model;
 
 namespace EveryThing
 {
@@ -1411,7 +1407,16 @@ namespace EveryThing
 
 
 
-
+            //  text1_ => DESCRIPTION
+            //  text2_ => INFO1
+            //  text3_ => INFO2
+            //  text4_ => CREATED_BY
+            //  text5_ => CHECKED_BY
+            //  text6_ => APPROVED_BY
+            //  text7_ => DELIVERY
+            //  dat1_ => DATE_CREATE
+            //  dat2_ => DATE_CHECKED
+            //  dat3_ => DATE_APPROVED
 
 
 
@@ -2415,9 +2420,16 @@ namespace EveryThing
                 //    //metcon_NetStandardLibrary.Errors errors = new metcon_NetStandardLibrary.Errors();
                 //    //List<metcon_NetStandardLibrary.DrawMiss> list = drawMiss.MissingNumbersList("8b250cd2-a518-4e78-8c3d-12c0a73e5e95", out errors);
 
-                //    metcon_NetStandardLibrary.DrawingEnum drawingEnum = new metcon_NetStandardLibrary.DrawingEnum(new metcon_NetStandardLibrary.ApplicationContext());
-                //    metcon_NetStandardLibrary.Errors adderrors = new metcon_NetStandardLibrary.Errors();
-                //    metcon_NetStandardLibrary.DrawingEnum.DrawingDB savedDraw = drawingEnum.AddDrawNumbersToDBFunction("71b5cb4d-9357-4044-98aa-5d857d7f8eae", out adderrors);
+                //metcon_NetStandardLibrary.DrawingEnum.DrawingDB savedDraw = drawingEnum.AddDrawNumbersToDBFunction("71b5cb4d-9357-4044-98aa-5d857d7f8eae", out adderrors);
+
+                //metcon_NetStandardLibrary.ApplicationContext db=  new metcon_NetStandardLibrary.ApplicationContext();
+
+                //List<metcon_NetStandardLibrary.DrawingEnum.DrawingDB> DrawingsList =
+                //    db.model_drawing_enum.FromSql(@"SELECT model_drawing_enum.*, pkoservices_projects_book.title
+                //    FROM model_drawing_enum
+                //    JOIN pkoservices_projects_book ON model_drawing_enum.project_id = pkoservices_projects_book.id
+                //    WHERE model_drawing_enum.model_id = {0}", ProjectGUID).ToList();
+
             }
             catch (Exception ex)
             {
@@ -3220,26 +3232,37 @@ namespace EveryThing
                 {
                     var selDraw = drawingEnumerator.Current;
 
-                    string oldZak = "";
-                    selDraw.GetUserProperty("metcon_DrZakaz", ref oldZak);
-                    int projID = int.MinValue;
-                    dict.TryGetValue(oldZak, out projID);
+                    //string oldZak = "";
+                    //selDraw.GetUserProperty("metcon_DrZakaz", ref oldZak);
+                    //int projID = int.MinValue;
+                    //dict.TryGetValue(oldZak, out projID);
 
-                    PropertyInfo pi = drawingEnumerator.Current.GetType()
-                        .GetProperty("Identifier", BindingFlags.Instance | BindingFlags.NonPublic);
+                    PropertyInfo pi = drawingEnumerator.Current.GetType().GetProperty("Identifier", BindingFlags.Instance | BindingFlags.NonPublic);
                     object value = pi.GetValue(drawingEnumerator.Current, null);
                     Identifier Identifier = (Identifier)value;
-                    TSM.Beam fakebeam = new TSM.Beam();
-                    fakebeam.Identifier = Identifier;
+                    TSM.Beam fakebeam = new TSM.Beam
+                    {
+                        Identifier = Identifier
+                    };
                     string nameBase = "";
                     fakebeam.GetReportProperty("NAME_BASE", ref nameBase);
 
+                    string drNum = string.Empty;
+                    selDraw.GetUserProperty("metcon_KMD_Number", ref drNum);
+                    drNum = drNum.Replace("и1", "");
 
-                    string drawResponse = DBQueryFree(@"
-                            update public.model_drawing_enum
-                            set project_id=" + projID + @"
-                            where model_id='92de03bb-3c15-4d26-b6b8-f9142d85d128'
-                            and name_base='" + nameBase + "'");
+                    string query = DBQueryFree(@"INSERT INTO public.model_drawing_enum(
+                        model_id, type, name_base, list, listov, username, kmd_number, project_id)
+	                    VALUES ('4aeffcfc-fa2c-46c6-8b2b-074e4be52569', 'A', '" + nameBase + "', '1', '1', 'skt', "
+                        + Convert.ToInt32(drNum) + ", 60)");
+
+
+
+                    //string drawResponse = DBQueryFree(@"
+                    //        update public.model_drawing_enum
+                    //        set kmd_number=" + Convert.ToInt32(drNum) + @"
+                    //        where model_id='92de03bb-3c15-4d26-b6b8-f9142d85d128'
+                    //        and name_base='" + nameBase + "'");
                 }
             }
 
@@ -3247,6 +3270,67 @@ namespace EveryThing
             {
                 MessageBox.Show(ex.ToString());
             }
+        }
+
+        private void button47_Click(object sender, EventArgs e)
+        {
+            string[] rows = File.ReadAllLines(@"\\172.16.0.23\models\Temp\новый 1.txt");
+            foreach (var item in rows)
+            {
+                string[] splitted = item.Split('\t');
+                string query = DBQueryFree(@"INSERT INTO public.model_drawing_enum(
+                        model_id, type, name_base, list, listov, username, kmd_number, project_id)
+	                    VALUES ('" + splitted[1].ToString() + "', '" + splitted[2].ToString()
+                    + "', '" + splitted[3].ToString() + "', '" + splitted[4].ToString()
+                    + "', '" + splitted[5].ToString() + "', '" + splitted[6].ToString()
+                    + "', " + Convert.ToInt32(splitted[9].ToString()) + ", " + Convert.ToInt32(splitted[10].ToString()) + ")");
+
+
+                //if (splitted[10].ToString() == @"\N")
+                //{
+                //    long id = (long)Convert.ToDouble(splitted[0].ToString());
+                //    string modelId= splitted[1].ToString();
+
+                //    string query = DBQueryFree(@"
+                //            update public.model_drawing_enum
+                //            set model_id='" + modelId + "' where id=" + id);
+                //}
+            }
+        }
+
+        private void button48_Click(object sender, EventArgs e)
+        {
+            var drawings = new TSD.DrawingHandler().GetDrawings();
+
+            drawings.SelectInstances = false;
+            while (drawings.MoveNext())
+            {
+                //if (drawings.Current is TSD.AssemblyDrawing Dwg)
+                //{
+                var nsme = drawings.Current.Name;
+                //}
+            };
+
+            //foreach (var item in drawings)
+            //{
+            //    TSD.Drawing drawing = (TSD.Drawing)item;
+            //    var nsme = drawing.Name;
+            //}
+        }
+
+        private void button49_Click(object sender, EventArgs e)
+        {
+            CultureInfo ci = Thread.CurrentThread.CurrentCulture;
+            DayOfWeek fdow = ci.DateTimeFormat.FirstDayOfWeek;
+            DayOfWeek today = DateTime.Now.DayOfWeek;
+            DateTime firstDayNextWeek = DateTime.Now.AddDays(-(today - fdow)).Date.AddDays(7);
+            DateTime lastDayNextWeek = firstDayNextWeek.AddDays(6);
+
+            DateTime[] dateTimes = new DateTime[2]
+            {
+                firstDayNextWeek,
+                lastDayNextWeek
+            };
         }
     }
 }

@@ -98,6 +98,9 @@
             this.button44 = new System.Windows.Forms.Button();
             this.button45 = new System.Windows.Forms.Button();
             this.button46 = new System.Windows.Forms.Button();
+            this.button47 = new System.Windows.Forms.Button();
+            this.button48 = new System.Windows.Forms.Button();
+            this.button49 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Det)).BeginInit();
@@ -140,10 +143,10 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(761, 223);
+            this.button4.Location = new System.Drawing.Point(783, 223);
             this.button4.Margin = new System.Windows.Forms.Padding(4);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(159, 37);
+            this.button4.Size = new System.Drawing.Size(137, 37);
             this.button4.TabIndex = 3;
             this.button4.Text = "Хар-ки профилей";
             this.button4.UseVisualStyleBackColor = true;
@@ -433,7 +436,7 @@
             this.button16.Location = new System.Drawing.Point(687, 122);
             this.button16.Margin = new System.Windows.Forms.Padding(4);
             this.button16.Name = "button16";
-            this.button16.Size = new System.Drawing.Size(100, 28);
+            this.button16.Size = new System.Drawing.Size(88, 28);
             this.button16.TabIndex = 32;
             this.button16.Text = "из HTML";
             this.button16.UseVisualStyleBackColor = true;
@@ -444,7 +447,7 @@
             this.button17.Location = new System.Drawing.Point(3, 223);
             this.button17.Margin = new System.Windows.Forms.Padding(4);
             this.button17.Name = "button17";
-            this.button17.Size = new System.Drawing.Size(240, 28);
+            this.button17.Size = new System.Drawing.Size(213, 28);
             this.button17.TabIndex = 33;
             this.button17.Text = "Дописать покрытие в болты";
             this.button17.UseVisualStyleBackColor = true;
@@ -452,10 +455,10 @@
             // 
             // button18
             // 
-            this.button18.Location = new System.Drawing.Point(588, 230);
+            this.button18.Location = new System.Drawing.Point(636, 230);
             this.button18.Margin = new System.Windows.Forms.Padding(4);
             this.button18.Name = "button18";
-            this.button18.Size = new System.Drawing.Size(165, 28);
+            this.button18.Size = new System.Drawing.Size(139, 28);
             this.button18.TabIndex = 34;
             this.button18.Text = "Из коорд. в метки";
             this.button18.UseVisualStyleBackColor = true;
@@ -504,7 +507,7 @@
             this.TB_Query.Name = "TB_Query";
             this.TB_Query.Size = new System.Drawing.Size(1299, 82);
             this.TB_Query.TabIndex = 38;
-            this.TB_Query.Text = "select * from public.model_info";
+            this.TB_Query.Text = resources.GetString("TB_Query.Text");
             // 
             // button22
             // 
@@ -864,19 +867,52 @@
             // 
             // button46
             // 
-            this.button46.Location = new System.Drawing.Point(272, 223);
+            this.button46.Location = new System.Drawing.Point(223, 224);
             this.button46.Name = "button46";
-            this.button46.Size = new System.Drawing.Size(243, 35);
+            this.button46.Size = new System.Drawing.Size(223, 35);
             this.button46.TabIndex = 74;
             this.button46.Text = "metcon_Zakaz>>metcon_DrZakaz";
             this.button46.UseVisualStyleBackColor = true;
             this.button46.Click += new System.EventHandler(this.button46_Click);
+            // 
+            // button47
+            // 
+            this.button47.Location = new System.Drawing.Point(1109, 223);
+            this.button47.Name = "button47";
+            this.button47.Size = new System.Drawing.Size(125, 28);
+            this.button47.TabIndex = 75;
+            this.button47.Text = "ModelIDFromFile";
+            this.button47.UseVisualStyleBackColor = true;
+            this.button47.Click += new System.EventHandler(this.button47_Click);
+            // 
+            // button48
+            // 
+            this.button48.Location = new System.Drawing.Point(174, 197);
+            this.button48.Name = "button48";
+            this.button48.Size = new System.Drawing.Size(161, 23);
+            this.button48.TabIndex = 76;
+            this.button48.Text = "Получить чертежи";
+            this.button48.UseVisualStyleBackColor = true;
+            this.button48.Click += new System.EventHandler(this.button48_Click);
+            // 
+            // button49
+            // 
+            this.button49.Location = new System.Drawing.Point(452, 226);
+            this.button49.Name = "button49";
+            this.button49.Size = new System.Drawing.Size(159, 32);
+            this.button49.TabIndex = 77;
+            this.button49.Text = "След. неделя";
+            this.button49.UseVisualStyleBackColor = true;
+            this.button49.Click += new System.EventHandler(this.button49_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1482, 847);
+            this.Controls.Add(this.button49);
+            this.Controls.Add(this.button48);
+            this.Controls.Add(this.button47);
             this.Controls.Add(this.button46);
             this.Controls.Add(this.button45);
             this.Controls.Add(this.button44);
@@ -1021,6 +1057,9 @@
         private System.Windows.Forms.Button button44;
         private System.Windows.Forms.Button button45;
         private System.Windows.Forms.Button button46;
+        private System.Windows.Forms.Button button47;
+        private System.Windows.Forms.Button button48;
+        private System.Windows.Forms.Button button49;
     }
 }
 
