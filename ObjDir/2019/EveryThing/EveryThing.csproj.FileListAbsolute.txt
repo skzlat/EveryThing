@@ -171,3 +171,5 @@
 \\172.16.0.23\models\!VSProjects\EveryThing\EveryThing\bin\Debug\System.Memory.xml
 \\172.16.0.23\models\!VSProjects\EveryThing\EveryThing\bin\Debug\System.Numerics.Vectors.xml
 \\172.16.0.23\models\!VSProjects\EveryThing\EveryThing\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+\\172.16.0.23\models\!VSProjects\EveryThing\EveryThing\bin\Debug\Octokit.dll
+\\172.16.0.23\models\!VSProjects\EveryThing\EveryThing\bin\Debug\Octokit.xml

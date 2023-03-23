@@ -36,10 +36,10 @@ namespace EveryThing
             var flag = false;
             var loopEnumerator = face.GetLoopEnumerator();
             loopEnumerator.MoveNext();
-            var loop = loopEnumerator.Current as Loop;
+            var loop = loopEnumerator.Current;
             var vertexEnumerator = loop.GetVertexEnumerator();
             vertexEnumerator.MoveNext();
-            var point = vertexEnumerator.Current as Point;
+            var point = vertexEnumerator.Current;
 
             var geomPlane = new GeometricPlane(point, face.Normal);
             var line = new Line(edge.StartPoint, edge.EndPoint);

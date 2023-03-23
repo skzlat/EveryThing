@@ -8,6 +8,7 @@ using Microsoft.Win32;
 using MimeKit;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Octokit;
 using OfficeOpenXml;
 using System;
 using System.Collections;
@@ -17,12 +18,15 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Tekla.Structures;
 using Tekla.Structures.Catalogs;
@@ -1801,6 +1805,8 @@ namespace EveryThing
 
 
             List<string> list = tsf.GetMultiDirectoryFileList("xml", false);
+
+            var fileee = Tekla.Structures.Dialog.UIControls.EnvironmentFiles.GetAttributeFile("objects.inp");
         }
 
 
@@ -2073,7 +2079,7 @@ namespace EveryThing
         {
             Vector vector1 = new Vector(point2.X - point1.X, point2.Y - point1.Y, point2.Z - point1.Z);
             Vector vector2 = new Vector(point3.X - point1.X, point3.Y - point1.Y, point3.Z - point1.Z);
-            return Parallel.VectorToVector(vector1, vector2);
+            return Tekla.Structures.Geometry3d.Parallel.VectorToVector(vector1, vector2);
         }
 
         private void button26_Click(object sender, EventArgs e)
@@ -3331,6 +3337,86 @@ namespace EveryThing
                 firstDayNextWeek,
                 lastDayNextWeek
             };
+        }
+
+        private void button50_Click(object sender, EventArgs e)
+        {
+            //https://csharp.webdelphi.ru/rabota-s-arxivami-zip-v-c/
+            var githubToken = "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";
+
+            var url = "https://github.com/skzlat/metcon_WPFPlugin_TableFromExcel/archive/refs/tags/v23.03.22.1.zip";
+            var path = @"D:\TEMP\v23.03.22.1.zip";
+
+
+            DirectoryInfo destination = new DirectoryInfo(@"D:\TEMP\DWN");
+            if (!destination.Exists)
+                destination.Create();
+            using (var client = new System.Net.Http.HttpClient())
+            {
+                var credentials = string.Format(CultureInfo.InvariantCulture, "{0}:", githubToken);
+                credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(credentials));
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", credentials);
+                var contents = client.GetByteArrayAsync(url).Result;
+                File.WriteAllBytes(path, contents);
+
+                MemoryStream ms = new MemoryStream(contents);
+
+                using (ZipArchive archive = new ZipArchive(ms))
+                {
+                    string fileName = "Functions.cs";
+                    var file = archive.Entries.Where(s => s.Name == fileName).FirstOrDefault();
+                    if (file != null)
+                        file.ExtractToFile(Path.Combine(destination.FullName, fileName), true);
+
+                    string directory = @"metcon_WPFPlugin_TableFromExcel-23.03.22.1\metcon_WPFPlugin_TableFromExcel\Properties";
+                    var dirName = new DirectoryInfo(directory).Name;
+
+                    var result = from currEntry in archive.Entries
+                                 where Path.GetDirectoryName(currEntry.FullName) == directory
+                                 where !string.IsNullOrEmpty(currEntry.Name)
+                                 select currEntry;
+
+                    DirectoryInfo destDir = new DirectoryInfo(Path.Combine(destination.FullName, dirName));
+                    if (!destDir.Exists)
+                        destDir.Create();
+                    foreach (ZipArchiveEntry entry in result)
+                        entry.ExtractToFile(Path.Combine(destDir.FullName, entry.Name), true);
+                }
+            }
+
+            //string archivePath = @"c:\archive\archive_min.zip";
+            //using var fileStream = File.Open(archivePath, FileMode.Open);
+            //ZipArchive archive = new ZipArchive(fileStream);
+            ////ИЛИ
+            //ZipArchive archive = new ZipArchive(fileStream, ZipArchiveMode.Update);
+        }
+
+        private void button51_Click(object sender, EventArgs e)
+        {
+            var token = "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";
+
+            var client = new GitHubClient(new ProductHeaderValue("UpdateSettings"));
+            var tokenAuth = new Credentials(token); // This can be a PAT or an OAuth token.
+            client.Credentials = tokenAuth;
+
+            var rel = client.Repository.Release.GetAll("skzlat", "metcon_WPFPlugin_TableFromExcel");
+            var sss = rel.Result;
+
+            var release = client.Repository.Release.GetLatest("skzlat", "metcon_WPFPlugin_TableFromExcel");
+            var latest = release.Result;
+
+            string downloadUrl = release.Result.Url;
+
+
+
+
+            var releaseArchive = client.Repository.Release.Get("skzlat", "metcon_WPFPlugin_TableFromExcel", "23.03.22.1");
+            var contents = releaseArchive.Result;
+
+
+            WebClient webClient = new WebClient();
+            webClient.Headers.Add("user-agent", "Anything");
+            webClient.DownloadFileTaskAsync(new Uri(latest.ZipballUrl), @"D:\TEMP\23.03.22.1.zip");
         }
     }
 }
