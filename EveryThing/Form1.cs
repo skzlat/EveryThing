@@ -3344,7 +3344,7 @@ namespace EveryThing
             //https://csharp.webdelphi.ru/rabota-s-arxivami-zip-v-c/
             var githubToken = "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";
 
-            var url = "https://github.com/skzlat/metcon_WPFPlugin_TableFromExcel/archive/refs/tags/v23.03.22.1.zip";
+            var url = "https://github.com/skzlat/metcon_WPFPlugin_TableFromExcel/archive/refs/tags/23.03.22.1.zip";
             var path = @"D:\TEMP\v23.03.22.1.zip";
 
 
@@ -3393,30 +3393,92 @@ namespace EveryThing
 
         private void button51_Click(object sender, EventArgs e)
         {
-            var token = "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";
+            string workspaceName = "skzlat";
+            string repositoryName = "metcon_WPFPlugin_TableFromExcel";
+            string filename = Path.Combine(@"D:\TEMP\temp.zip");
 
-            var client = new GitHubClient(new ProductHeaderValue("UpdateSettings"));
-            var tokenAuth = new Credentials(token); // This can be a PAT or an OAuth token.
+            var client = new GitHubClient(new ProductHeaderValue(repositoryName));
+            string GitHubToken = "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___";
+            var tokenAuth = new Credentials(GitHubToken);
             client.Credentials = tokenAuth;
 
-            var rel = client.Repository.Release.GetAll("skzlat", "metcon_WPFPlugin_TableFromExcel");
-            var sss = rel.Result;
-
-            var release = client.Repository.Release.GetLatest("skzlat", "metcon_WPFPlugin_TableFromExcel");
-            var latest = release.Result;
-
-            string downloadUrl = release.Result.Url;
-
-
-
-
-            var releaseArchive = client.Repository.Release.Get("skzlat", "metcon_WPFPlugin_TableFromExcel", "23.03.22.1");
-            var contents = releaseArchive.Result;
-
+            var latest = client.Repository.Release.GetLatest(workspaceName, repositoryName).Result;
 
             WebClient webClient = new WebClient();
             webClient.Headers.Add("user-agent", "Anything");
-            webClient.DownloadFileTaskAsync(new Uri(latest.ZipballUrl), @"D:\TEMP\23.03.22.1.zip");
+            webClient.Headers.Add("authorization", "token " + GitHubToken);
+            webClient.DownloadFileTaskAsync(new Uri(latest.ZipballUrl), filename);
+
+
+
+
+
+
+
+            //var token = "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";
+
+            //// Initializes a GitHubClient
+            //GitHubClient client = new GitHubClient(new ProductHeaderValue("UpdateSettings"));
+            //client.Credentials = new Credentials(token);
+
+            //var releases = client.Repository.Release.GetAll("skzlat", "metcon_WPFPlugin_TableFromExcel");
+            //var latest = releases.Result.ElementAt(0);
+            //Console.WriteLine(
+            //    "The latest release is tagged at {0} and is named {1}",
+            //    latest.TagName,
+            //    latest.Name);
+
+            //var newRelease = new NewRelease("v1.0.0")
+            //{
+            //    Name = "Version One Point Oh",
+            //    Body = "**This** is some *Markdown*",
+            //    Draft = true,
+            //    Prerelease = false
+            //};
+
+            //try
+            //{
+            //    var result = client.Repository.Release.Create("skzlat", "metcon_WPFPlugin_TableFromExcel", newRelease);
+            //    Console.WriteLine("Created release id {0}", result.Id);
+            //}
+            //catch (ApiException ex)
+            //{
+            //    Console.WriteLine(ex.Message);
+            //}
+
+            //using (var archiveContents = File.OpenRead(@"D:\TEMP\123.zip"))
+            //{ // TODO: better sample
+            //    var assetUpload = new ReleaseAssetUpload()
+            //    {
+            //        FileName = "my-cool-project-1.0.zip",
+            //        ContentType = "application/zip",
+            //        RawData = archiveContents
+            //    };
+            //    var release = client.Repository.Release.Get("skzlat", "metcon_WPFPlugin_TableFromExcel", "23.03.22.1");
+            //    var asset =  client.Repository.Release.UploadAsset(release.Result, assetUpload);
+            //}
+
+            //// Gets the latest release
+            //Release latestRelease = client.Repository.Release.GetLatest("skzlat", "metcon_WPFPlugin_TableFromExcel").Result;
+
+            //WebClient webClient = new WebClient();
+            //webClient.Headers.Add("user-agent", "Anything");
+            //webClient.Headers.Add("authorization", "token " + token);
+            //webClient.DownloadFileTaskAsync(new Uri("https://github.com/skzlat/metcon_WPFPlugin_TableFromExcel/archive/refs/tags/23.03.22.1.zip"),
+            //    Path.Combine(@"D:\TEMP\", latestRelease.TagName + ".zip"));
+
+            //int assetId = latestRelease.Assets[0].Id;
+            //string downloadUrl = $"https://github.com/skzlat/metcon_WPFPlugin_TableFromExcel/archive/refs/tags/23.03.22.1.zip";
+
+            //// Download with WebClient
+            //webClient.Headers.Add(HttpRequestHeader.UserAgent, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36");
+            //webClient.Headers.Add(HttpRequestHeader.Authorization, token);
+            //webClient.Headers.Add(HttpRequestHeader.Accept, "application/octet-stream");
+
+            //// Download the file
+            //webClient.DownloadFileAsync(new Uri(downloadUrl), Path.Combine(@"D:\TEMP\", latestRelease.TagName + ".zip"));
+
+            //webClient.Dispose();
         }
     }
 }
